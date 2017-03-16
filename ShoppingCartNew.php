@@ -21,8 +21,7 @@ class ShoppingCart
 
     public function addProduct (Product $newProduct)
     {
-        $this->products[] = array("productId" => $newProduct->getId(), "name" => $newProduct->getName(), "description" => $newProduct->getDescription(), "price" => $newProduct->getPrice(), "quantity" => 1, "totalPrice" => Product::getTotalSumWithQuantity($newProduct->getPrice(),1));
-
+        $this->products[] = $newProduct;
     }
 
 
@@ -31,9 +30,9 @@ class ShoppingCart
     {
         foreach ($this->products as $keyToDelete => $oneLine)
         {
-            foreach ($oneLine as $key => $element)
+            if ($oneLine->getId() == $productId)
             {
-             if ($key == 'productId' && $element == $productId)  unset($this->products[$keyToDelete]); //usuwa z tablicy produkt
+             unset($this->products[$keyToDelete]);
             }
         }
 
@@ -42,18 +41,14 @@ class ShoppingCart
     public function changeProductQuantity($productId, $newQuantity)
     {
 
-        foreach ($this->products as &$item)  //Ważne - trzeba zastosować referencję
+        foreach ($this->products as $oneLine)
         {
-            if ($item['productId'] == $productId)
+            if ($oneLine->getId() == $productId)
             {
-                $item['quantity'] = $newQuantity;
-                $item['totalPrice'] = $newQuantity * $item['price'];
-
-                $item['totalPrice'] = Product::getTotalSumWithQuantity($item['price'],$newQuantity);
-
+                $oneLine->setQuantity($newQuantity);
             }
-
         }
+
 
     }
 
@@ -67,24 +62,17 @@ class ShoppingCart
         echo "<td>Quantity</td>";
         echo "<td>Total price</td>";
         echo "</tr>";
+        $totalAmountToPay = 0;
         foreach ($this->products as $oneLine) {
             echo "<tr>";
-            //Można zastsować takie rozwiązanie, tylko tu byłby bez formatowania liczb za pomocą funkcji number_format:
-               /*
-                *
-                foreach ($oneLine as $element) {
-                echo "<td>";
-                echo $element;
-                echo "</td>";
-               }
-               */
 
-            echo "<td>" . $oneLine['productId'] . "</td>";
-            echo "<td>" . $oneLine['name'] . "</td>";
-            echo "<td>" . $oneLine['description'] . "</td>";
-            echo "<td>" . number_format($oneLine['price'], 2, ',', ' ') . "</td>";
-            echo "<td>" . $oneLine['quantity'] . "</td>";
-            echo "<td>" . number_format($oneLine['totalPrice'], 2, ',', ' ') . "</td>";
+            echo "<td>" . $oneLine->getId() . "</td>";
+            echo "<td>" . $oneLine->getName() . "</td>";
+            echo "<td>" . $oneLine->getDescription() . "</td>";
+            echo "<td>" . number_format($oneLine->getPrice(), 2, ',', ' ') . "</td>";
+            echo "<td>" . $oneLine->getQuantity() . "</td>";
+            $totalAmountToPay += Product::getTotalSumWithQuantity($oneLine->getPrice(),$oneLine->getQuantity());
+            echo "<td>" . number_format(Product::getTotalSumWithQuantity($oneLine->getPrice(),$oneLine->getQuantity()), 2, ',', ' ') . "</td>";
 
             echo "</tr>";
         }
@@ -92,11 +80,7 @@ class ShoppingCart
         echo "<tr><td></td><td></td><td></td><td></td>";
         echo "<td><strong>Total:</strong></td>";
         echo "<td>";
-        $totalAmountToPay = 0;
-        foreach ($this->products as $item)
-        {
-            $totalAmountToPay +=    $item['totalPrice'];
-        }
+
         echo "<strong>" . number_format($totalAmountToPay, 2, ',', ' ') ."</strong>";
 
         echo "</td>";
@@ -115,12 +99,18 @@ $product2 = new Product('Młotek','Narzędzie do wbijania gwoździ', 19.90, 2);
 var_dump($product2);
 $product3 = new Product('Śrubokręt','Narzędzie do wkręcania śrub', 11.20, 1);
 var_dump($product3);
+$product4 = new Product('Śrubokręt','Narzędzie do wkręcania śrub', 31.20, 1);
+var_dump($product4);
+$product5 = new Product('Wiertarka','Narzędzie do wiercenia', 311.70, 1);
+var_dump($product5);
 
 
 $cartWithProducts = new ShoppingCart();
 $cartWithProducts->addProduct($product3);
 $cartWithProducts->addProduct($product1);
+$cartWithProducts->addProduct($product4);
 $cartWithProducts->addProduct($product2);
+$cartWithProducts->addProduct($product5);
 
 
 $cartWithProducts->printRecipt();
