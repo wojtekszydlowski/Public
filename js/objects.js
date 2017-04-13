@@ -15,6 +15,7 @@
  jAvAsCrIpT jEsT sUpEr
  */
 
+
 String.prototype.upperLower = function(){
     //console.log(this);
     var newText ="";
@@ -27,6 +28,9 @@ String.prototype.upperLower = function(){
     }
     return newText;
 }
+
+
+
 
 
 
@@ -89,6 +93,7 @@ var car = {
     brand: "Audi",
     color: "Red",
     kmDriven: 0,
+    inspection=[],
     printCarinfo: function() {
         console.log("Marka samochodu: " + this.brand);
         console.log("Kolor samochodu: " + this.color);
@@ -109,7 +114,7 @@ var car = {
 
 }
 
-car.inspection=[];
+//car.inspection=[];
 car.addInspection("Przegląd auta 10.10.2016");
 car.addInspection("Przegląd auta 10.12.2016");
 car.addInspection("Przegląd auta 10.05.2017");
